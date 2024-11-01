@@ -343,7 +343,8 @@ class SceneTextDataset(Dataset):
                  drop_under_threshold=1,
                  color_jitter=True,
                  normalize=True,
-                 use_dilation=True): # True/False로 적용 가능합니다
+                 use_dilation=True
+                 use_erosion=True): # True/False로 적용 가능합니다
         self._lang_list = ['chinese', 'japanese', 'thai', 'vietnamese']
         self.root_dir = root_dir
         self.split = split
@@ -359,7 +360,7 @@ class SceneTextDataset(Dataset):
 
         self.image_size, self.crop_size = image_size, crop_size
         self.color_jitter, self.normalize = color_jitter, normalize
-        self.use_dilation = use_dilation
+        self.use_dilation, self.erosion = use_dilation, use_erosion
 
         self.drop_under_threshold = drop_under_threshold
         self.ignore_under_threshold = ignore_under_threshold
@@ -415,6 +416,13 @@ class SceneTextDataset(Dataset):
         if self.use_dilation:
             kernel = np.ones((3, 3), np.uint8)  # Dilation 커널 크기 설정 (3x3)
             image = cv2.dilate(image, kernel, iterations=1)
+        
+        # erosion
+        '''
+        if self.use_erosion:
+            kernel = np.ones((3, 3), np.uint8)
+            image =  cv2.erode(image, kernel, iterations=1)
+        '''
 
         funcs = []
         if self.color_jitter:
